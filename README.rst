@@ -1,0 +1,129 @@
+======
+Apache
+======
+
+Install and configure Apache webserver
+
+Available states
+================
+
+.. contents::
+    :local:
+
+``apache.server``
+--------------------
+
+Setup apache server
+
+Available metadata
+==================
+
+.. contents::
+    :local:
+
+``metadata.apache.server.single``
+--------------------------
+
+Setup basic server
+
+Configuration parameters
+========================
+
+
+Example reclass
+===============
+
+Simple Apache proxy
+
+.. code-block:: yaml
+
+    apache:
+      server:
+        enabled: true
+        bind:
+          address: '0.0.0.0'
+          ports:
+          - 80
+        modules:
+        - proxy
+        - proxy_http
+        - proxy_balancer
+
+
+Apache plain static sites (eg. sphinx generated, from git/hg sources)
+
+.. code-block:: yaml
+
+    apache:
+      server:
+        enabled: true
+        bind:
+          address: '0.0.0.0'
+          ports:
+          - 80
+        modules:
+        - rewrite
+        - status
+        site:
+        - enabled: true
+          name: 'sphinxdoc'
+          type: 'static'
+          host:
+            name: 'doc.domain.com'
+            port: 80
+          source:
+            engine: local
+        - enabled: true
+          name: 'impressjs'
+          type: 'static'
+          host:
+            name: 'pres.domain.com'
+            port: 80
+          source:
+            engine: git
+            address: 'git@repo1.domain.cz:impress/billometer.git'
+            revision: 'master'
+
+Example pillar
+==============
+
+Roundcube webmail, postfixadmin and mailman
+
+.. code-block:: yaml
+
+    classes:
+    - service.apache.server.single
+    parameters:
+      apache:
+        server:
+          modules:
+            - cgi
+            - php
+          site:
+            roundcube:
+              enabled: true
+              type: static
+              name: roundcube
+              root: /usr/share/roundcube
+              locations:
+                - uri: /admin
+                  path: /usr/share/postfixadmin
+                - uri: /mailman
+                  path: /usr/lib/cgi-bin/mailman
+                  script: true
+                - uri: /pipermail
+                  path: /var/lib/mailman/archives/public
+                - uri: /images/mailman
+                  path: /usr/share/images/mailman
+              host:
+                name: mail.example.com
+                aliases:
+                  - mail.example.com
+                  - lists.example.com
+                  - mail01.example.com
+                  - mail01
+
+Read more
+=========
+
+* https://httpd.apache.org/docs/

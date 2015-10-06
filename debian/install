@@ -1,0 +1,2 @@
+apache/*             /usr/share/salt-formulas/env/apache/
+metadata/service/*   /usr/share/salt-formulas/reclass/service/apache/
