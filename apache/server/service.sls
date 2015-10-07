@@ -49,6 +49,16 @@ apache_wsgi_package:
 
 {%- endif %}
 
+{%- if module == 'xsendfile' %}
+
+apache_xsendfile_package:
+  pkg.installed:
+  - name: {{ server.mod_xsendfile }}
+  - require:
+    - pkg: apache_packages
+
+{%- endif %}
+
 apache_{{ module }}_enable:
   cmd.run:
   - name: "a2enmod {{ module }}"
