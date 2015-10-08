@@ -35,7 +35,7 @@
 
 /etc/ssl/private/{{ site.host.name }}.key:
   file.managed:
-  {%- if site.ssl.cert is defined %}
+  {%- if site.ssl.key is defined %}
   - contents_pillar: apache:server:site:{{ site_name }}:key
   {%- else %}
   - source: salt://pki/{{ site.ssl.authority }}/certs/{{ site.host.name }}.key.pem
@@ -45,7 +45,7 @@
 
 /etc/ssl/certs/ca-chain.crt:
   file.managed:
-  {%- if site.ssl.cert is defined %}
+  {%- if site.ssl.chain is defined %}
   - contents_pillar: apache:server:site:{{ site_name }}:chain
   {%- else %}
   - source: salt://pki/{{ site.ssl.authority }}/{{ site.ssl.authority }}-chain.cert.pem
