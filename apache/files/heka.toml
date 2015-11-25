@@ -1,0 +1,28 @@
+{%- from "apache/map.jinja" import server with context -%}
+## Inputs
+
+[logstreamer_apache_access]
+type = "LogstreamerInput"
+log_directory = "/var/log/apache"
+file_match = 'access\.log\.?(?P<Index>\d+)?(.gz)(?P<Index>\d*)''
+priority = ["^Index"]
+decoder = "Sandbox_apache_access"
+
+[logstreamer_apache_site_access]
+type = "LogstreamerInput"
+log_directory = "/var/log/apache"
+file_match = '(?P<SiteName>.+)-access\.log\.?(?P<Index>\d*)'
+priority = ["^Index"]
+differentiator = ["apache-", "SiteName", "-access"]
+decoder = "Sandbox_apache_access"
+
+## Sandboxes
+
+[Sandbox_apache_access]
+type = "SandboxDecoder"
+filename = "lua_decoders/apache_access.lua"
+
+[Sandbox_apache_access.config]
+type = "apache_combined"
+user_agent_transform = true
+log_format = '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"'
