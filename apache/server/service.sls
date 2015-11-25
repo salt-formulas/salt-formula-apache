@@ -93,4 +93,39 @@ apache_remove_packages:
   - require:
     - service: apache_service_dead
 
+{%- for mpm_type, mpm in server.mpm.iteritems() %}
+
+{%- if mpm.enabled %}
+
+apache_mpm_{{ mpm_type }}_enable:
+  cmd.run:
+  - name: "a2enmod mpm_{{ mpm_type }}"
+  - creates: /etc/apache2/mods-enabled/mpm_{{ mpm_type }}.load
+  - require:
+    - file: apache_mpm_{{ mpm_type }}_config
+  - watch_in:
+    - service: apache_service
+
+apache_mpm_{{ mpm_type }}_config:
+  file.managed:
+  - name /etc/apache2/mods-available/mpm_{{ mpm_type }}.conf
+  - source: salt://apache/files/mpm/mpm_{{ mpm_type }}.conf
+  - template: jinja
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
+{%- else %}
+
+apache_mpm_{{ mpm_type }}_disable:
+  file.absent:
+  - name: /etc/apache2/mods-enabled/mpm_{{ mpm_type }}.load
+  - watch_in:
+    - service: apache_service
+
+{%- endif %}
+
+{%- endfor %}
+
 {%- endif %}

@@ -84,6 +84,20 @@ Apache plain static sites (eg. sphinx generated, from git/hg sources)
             address: 'git@repo1.domain.cz:impress/billometer.git'
             revision: 'master'
 
+Tune settings of mpm_prefork
+
+.. code-block:: yaml
+
+    parameters:
+      apache:
+        mpm:
+          prefork:
+            max_clients: 250
+            servers:
+              min: 32
+              max: 64
+              max_requests: 4000
+
 Example pillar
 ==============
 
