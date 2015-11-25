@@ -13,3 +13,21 @@ parameters:
       modules:
       - ssl
       - rewrite
+      mpm:
+        prefork:
+          enabled: true
+          servers:
+            start: 5
+            spare:
+              min: ${apache:server:mpm:prefork:servers:start}
+              max: 10
+            # Avoid memory leakage by restarting workers every x requests
+            max_requests: 0
+          # Should be 80% of server memory / average memory usage of one worker
+          max_clients: 150
+          # Should be same or more than max clients
+          limit: ${apache:server:mpm:prefork:max_clients}
+        event:
+          enabled: false
+        worker:
+          enabled: false
