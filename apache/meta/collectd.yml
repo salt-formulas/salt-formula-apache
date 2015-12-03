@@ -1,0 +1,5 @@
+plugin:
+  apache_server_status:
+    plugin: apache
+    interval: 60
+    template: apache/files/collectd_apache.conf

@@ -1,0 +1,14 @@
+{%- from "nginx/map.jinja" import server with context -%}
+doc:
+  name: NGinx
+  role:
+    server:
+      name: server
+      params: []
+      endpoints:
+{%- for site_name, site in server.get('site', {}).iteritems() %}
+{%- if site.enabled %}
+      - address: "{{ site.host.name }}:{{ site.host.get('port', '80') }}"
+        name: {{ site.type}} {{ site_name }}
+{%- endif %}
+{%- endfor %}

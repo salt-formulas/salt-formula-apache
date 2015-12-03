@@ -1,5 +1,7 @@
 applications:
 - apache
+classes:
+- service.apache.support
 parameters:
   apache:
     server:
