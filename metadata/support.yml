@@ -1,5 +1,5 @@
 parameters:
-  collectd:
+  apache:
     _support:
       collectd:
         enabled: true

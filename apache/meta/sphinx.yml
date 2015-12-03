@@ -1,6 +1,6 @@
 {%- from "nginx/map.jinja" import server with context -%}
 doc:
-  name: NGinx
+  name: Apache
   role:
     server:
       name: server
