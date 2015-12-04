@@ -4,11 +4,16 @@ doc:
   role:
     server:
       name: server
-      params: []
-      endpoints:
-{%- for site_name, site in server.get('site', {}).iteritems() %}
-{%- if site.enabled %}
-      - address: "{{ site.host.name }}:{{ site.host.get('port', '80') }}"
-        name: {{ site.type}} {{ site_name }}
-{%- endif %}
-{%- endfor %}
+      param:
+        version:
+          value: "{{ salt['apache.version']|replace("Apache/", '') }}"
+      endpoint:
+  {%- for site_name, site in server.get('site', {}).iteritems() %}
+  {%- if site.enabled %}
+        {{ site_name }}_{{ site.type }}:
+          name: {{ site_name }}
+          type: {{ site.type }}
+          address: http{% if site.get('ssl', {}).get('enabled', False) %}s{% endif %}://{{ site.host.name }}:{{ site.host.get('port', '80') }}/
+          protocol: http{% if site.get('ssl', {}).get('enabled', False) %}s{% endif %}
+  {%- endif %}
+  {%- endfor %}
