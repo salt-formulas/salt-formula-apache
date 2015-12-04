@@ -6,7 +6,7 @@ doc:
       name: server
       param:
         version:
-          value: "{{ salt['apache.version']|replace("Apache/", '') }}"
+          value: "{{ salt['apache.version']()|replace("Apache/", '') }}"
       endpoint:
   {%- for site_name, site in server.get('site', {}).iteritems() %}
   {%- if site.enabled %}
