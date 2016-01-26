@@ -110,6 +110,7 @@ Roundcube webmail, postfixadmin and mailman
     parameters:
       apache:
         server:
+          enabled: true
           modules:
             - cgi
             - php
