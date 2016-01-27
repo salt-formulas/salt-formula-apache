@@ -59,6 +59,16 @@ apache_xsendfile_package:
 
 {%- endif %}
 
+{%- if module == 'kerb' %}
+
+apache_kerb_package:
+  pkg.installed:
+  - name: {{ server.mod_kerb }}
+  - require:
+    - pkg: apache_packages
+
+{%- endif %}
+
 apache_{{ module }}_enable:
   cmd.run:
   - name: "a2enmod {{ module }}"
