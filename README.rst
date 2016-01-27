@@ -98,6 +98,35 @@ Tune settings of mpm_prefork
               max: 64
               max_requests: 4000
 
+Apache kerberos authentication:
+
+.. code-block:: yaml
+
+    parameters
+      apache:
+        server:
+          site:
+            auth:
+             engine: kerberos
+             name: "Kerberos Authentication"
+             require:
+               - "ldap-attribute memberOf='cn=somegroup,cn=groups,cn=accounts,dc=example,dc=com'"
+
+             kerberos:
+               realms:
+                 - EXAMPLE.COM
+               # Bellow is optional
+               keytab: /etc/apache2/ipa.keytab
+               service: HTTP
+               method:
+                 negotiate: true
+                 k5passwd: true
+
+             ldap:
+               url: "ldaps://idm01.example.com/dc=example,dc=com?krbPrincipalName"
+               # mech is optional
+               mech: GSSAPI
+
 Example pillar
 ==============
 

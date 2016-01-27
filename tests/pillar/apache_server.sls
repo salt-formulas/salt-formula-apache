@@ -13,6 +13,22 @@ apache:
         locations:
           - uri: /admin
             path: /usr/share/postfixadmin
+            auth:
+             engine: kerberos
+             name: "Kerberos Authentication"
+             require:
+               - "ldap-attribute memberOf='cn=jenkins,cn=groups,cn=accounts,dc=example,dc=eu'"
+             kerberos:
+               realms:
+                 - EXAMPLE.EU
+               keytab: /etc/apache2/ipa.keytab
+               service: HTTP
+               method:
+                 negotiate: true
+                 k5passwd: true
+             ldap:
+               url: "ldaps://idm01.example.eu/dc=example,dc=eu?krbPrincipalName"
+               mech: GSSAPI
           - uri: /mailman
             path: /usr/lib/cgi-bin/mailman
             script: true
