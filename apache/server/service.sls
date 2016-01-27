@@ -61,9 +61,9 @@ apache_xsendfile_package:
 
 {%- if module == 'kerb' %}
 
-apache_kerb_package:
+apache_auth_kerb_package:
   pkg.installed:
-  - name: {{ server.mod_kerb }}
+  - name: {{ server.mod_auth_kerb }}
   - require:
     - pkg: apache_packages
 
