@@ -34,6 +34,8 @@ apache:
             script: true
           - uri: /pipermail
             path: /var/lib/mailman/archives/public
+            webdav:
+              enabled: true
           - uri: /images/mailman
             path: /usr/share/images/mailman
         host:

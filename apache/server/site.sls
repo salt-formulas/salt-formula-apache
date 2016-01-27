@@ -21,6 +21,26 @@
   - watch_in:
     - service: apache_service
 
+{%- if site.get('webdav', {}).get('enabled', False) %}
+{{ site.name }}_webdav_dir:
+  file.directory:
+  - name: {{ site.root }}
+  - user: {{ server.user }}
+  - group: {{ server.group }}
+  - makedirs: true
+{%- endif %}
+
+{%- for location in site.get('locations', []) %}
+{%- if location.get('webdav', {}).get('enabled', False) %}
+{{ site.name }}_webdav_{{ location.uri }}_dir:
+  file.directory:
+  - name: {{ location.path }}
+  - user: {{ server.user }}
+  - group: {{ server.group }}
+  - makedirs: true
+{%- endif %}
+{%- endfor %}
+
 {%- if site.get('ssl', {'enabled': False}).enabled %}
 
 /etc/ssl/certs/{{ site.host.name }}.crt:

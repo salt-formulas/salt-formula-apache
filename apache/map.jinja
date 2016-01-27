@@ -14,6 +14,8 @@
         'conf_ext': '.conf',
         'log_dir': '/var/log/apache2',
         'wwwdir': '/srv',
+        'user': 'www-data',
+        'group': 'www-data',
     },
     'Arch': {
         'pkgs': ['apache'],
@@ -26,6 +28,8 @@
         'conf_ext': '.conf',
         'log_dir': '/var/log/httpd',
         'wwwdir': '/srv',
+        'user': 'apache',
+        'group': 'apache',
     },
     'RedHat': {
         'pkgs': ['httpd'],
@@ -37,6 +41,8 @@
         'conf_ext': '.conf',
         'log_dir': '/var/log/httpd',
         'www_dir': '/var/www',
+        'user': 'apache',
+        'group': 'apache',
     },
     'FreeBSD': {
         'pkgs': ['apache22'],
@@ -48,5 +54,7 @@
         'conf_ext': '',
         'log_dir': '/var/log/',
         'www_dir': '/usr/local/www/apache22/',
+        'user': 'apache',
+        'group': 'apache',
     },
 }, merge=salt['pillar.get']('apache:server')) %}
