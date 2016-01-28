@@ -7,7 +7,7 @@ apache_packages:
 
 apache_ports_config:
   file.managed:
-  - name /etc/apache2/ports.conf
+  - name: /etc/apache2/ports.conf
   - source: salt://apache/files/ports.conf
   - template: jinja
   - require:
