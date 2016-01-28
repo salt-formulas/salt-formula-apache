@@ -59,7 +59,7 @@ apache_xsendfile_package:
 
 {%- endif %}
 
-{%- if module == 'kerb' %}
+{%- if module == 'auth_kerb' %}
 
 apache_auth_kerb_package:
   pkg.installed:
