@@ -5,6 +5,16 @@ apache_packages:
   pkg.installed:
   - names: {{ server.pkgs }} 
 
+apache_ports_config:
+  file.managed:
+  - name /etc/apache2/ports.conf
+  - source: salt://apache/files/ports.conf
+  - template: jinja
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
 {%- for module in server.modules %}
 
 {%- if module == 'passenger' %}

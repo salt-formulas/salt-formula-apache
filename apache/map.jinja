@@ -58,3 +58,14 @@
         'group': 'apache',
     },
 }, merge=salt['pillar.get']('apache:server')) %}
+
+{%- set listen_ports = {} %}
+{%- if server.site is defined %}
+{%- for site_name, site in server.site.iteritems() %}
+
+{%- if site.host.get('port', 80) %}
+{%- set dummy=listen_ports.update({site.host.get('port', 80): None}) %}
+{%- endif %}
+
+{%- endfor %}
+{%- endif %}
