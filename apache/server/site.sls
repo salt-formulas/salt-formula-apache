@@ -25,8 +25,8 @@
 {{ site.name }}_webdav_dir:
   file.directory:
   - name: {{ site.root }}
-  - user: {{ server.user }}
-  - group: {{ server.group }}
+  - user: {{ server.service_user }}
+  - group: {{ server.service_group }}
   - makedirs: true
 {%- endif %}
 
@@ -35,8 +35,8 @@
 {{ site.name }}_webdav_{{ location.uri }}_dir:
   file.directory:
   - name: {{ location.path }}
-  - user: {{ server.user }}
-  - group: {{ server.group }}
+  - user: {{ server.service_user }}
+  - group: {{ server.service_group }}
   - makedirs: true
 {%- endif %}
 {%- endfor %}
