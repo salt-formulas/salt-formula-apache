@@ -4,6 +4,11 @@ apache:
     modules:
       - cgi
       - php
+    user:
+      cloudlab:
+        enabled: true
+        password: cloudlab
+        htpasswd: cloudlab.htpasswd
     site:
       roundcube:
         enabled: true
@@ -32,6 +37,9 @@ apache:
           - uri: /mailman
             path: /usr/lib/cgi-bin/mailman
             script: true
+            auth:
+              engine: basic
+              htpasswd: cloudlab.htpasswd
           - uri: /pipermail
             path: /var/lib/mailman/archives/public
             webdav:
