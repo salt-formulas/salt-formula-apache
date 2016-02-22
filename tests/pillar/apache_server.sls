@@ -53,6 +53,7 @@ apache:
             - lists.example.com
             - mail01.example.com
             - mail01
+    default_mpm: prefork
     mpm:
       prefork:
         enabled: true
@@ -67,7 +68,3 @@ apache:
         max_clients: 150
         # Should be same or more than max clients
         limit: ${apache:server:mpm:prefork:max_clients}
-    event:
-      enabled: false
-    worker:
-      enabled: true

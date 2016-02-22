@@ -5,7 +5,7 @@
 
 {%- for mpm_type, mpm in server.mpm.iteritems() %}
 
-{%- if mpm.enabled %}
+{%- if mpm_type == server.get('default_mpm', 'prefork') %}
 
 apache_mpm_{{ mpm_type }}_enable:
   cmd.run:

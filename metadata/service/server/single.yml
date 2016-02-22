@@ -15,9 +15,9 @@ parameters:
       modules:
       - ssl
       - rewrite
+      default_mpm: prefork
       mpm:
         prefork:
-          enabled: true
           servers:
             start: 5
             spare:
@@ -30,7 +30,6 @@ parameters:
           # Should be same or more than max clients
           limit: ${apache:server:mpm:prefork:max_clients}
         event:
-          enabled: false
           servers:
             start: 5
             spare:
@@ -43,7 +42,6 @@ parameters:
           max_clients: 150
           limit: 64
         worker:
-          enabled: false
           servers:
             start: 5
             spare:
