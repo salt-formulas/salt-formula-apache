@@ -127,6 +127,20 @@ Apache kerberos authentication:
                # mech is optional
                mech: GSSAPI
 
+Tune security settings (these are default):
+
+.. code-block:: yaml
+
+    parameters:
+      apache:
+        server:
+          # ServerTokens
+          tokens: Prod
+          # ServerSignature
+          signature: False
+          # TraceEnable
+          trace: False
+
 Example pillar
 ==============
 
