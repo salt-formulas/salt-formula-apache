@@ -63,7 +63,7 @@
   - require:
     - pkg: apache_packages
 
-/etc/ssl/certs/ca-chain.crt:
+/etc/ssl/certs/{{ site.host.name }}-ca-chain.crt:
   file.managed:
   {%- if site.ssl.chain is defined %}
   - contents_pillar: apache:server:site:{{ site_name }}:ssl:chain
