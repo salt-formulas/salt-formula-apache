@@ -136,10 +136,19 @@ Tune security settings (these are default):
         server:
           # ServerTokens
           tokens: Prod
-          # ServerSignature
-          signature: False
-          # TraceEnable
-          trace: False
+          # ServerSignature, can be also set per-site
+          signature: false
+          # TraceEnable, can be also set per-site
+          trace: false
+          # Deny access to .git, .svn, .hg directories
+          secure_scm: true
+          # Required for settings bellow
+          modules:
+            - headers
+          # Set X-Content-Type-Options
+          content_type_options: nosniff
+          # Set X-Frame-Options
+          frame_options: sameorigin
 
 Example pillar
 ==============
