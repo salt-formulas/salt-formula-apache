@@ -7,7 +7,6 @@ log_directory = "/var/log/apache"
 file_match = 'access\.log\.?(?P<Index>\d+)?(.gz)(?P<Index>\d*)''
 priority = ["^Index"]
 decoder = "Sandbox_apache_access"
-oldest_duration: "168h"
 
 [logstreamer_apache_site_access]
 type = "LogstreamerInput"
@@ -16,7 +15,6 @@ file_match = '(?P<SiteName>.+)-access\.log\.?(?P<Index>\d*)'
 priority = ["^Index"]
 differentiator = ["apache-", "SiteName", "-access"]
 decoder = "Sandbox_apache_access"
-oldest_duration: "168h"
 
 ## Sandboxes
 
