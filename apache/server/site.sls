@@ -2,6 +2,8 @@
 {%- if server.enabled %}
 
 {%- if server.site is defined %}
+{%- set ssl_certificates = {} %}
+
 {%- for site_name, site in server.site.iteritems() %}
 
 {% if site.enabled %}
@@ -41,7 +43,8 @@
 {%- endif %}
 {%- endfor %}
 
-{%- if site.get('ssl', {'enabled': False}).enabled %}
+{%- if site.get('ssl', {'enabled': False}).enabled and site.host.name not in ssl_certificates.keys() %}
+{%- set _dummy = ssl_certificates.update({site.host.name: []}) %}
 
 /etc/ssl/certs/{{ site.host.name }}.crt:
   file.managed:
