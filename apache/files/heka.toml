@@ -3,14 +3,14 @@
 
 [logstreamer_apache_access]
 type = "LogstreamerInput"
-log_directory = "/var/log/apache"
-file_match = 'access\.log\.?(?P<Index>\d+)?(.gz)(?P<Index>\d*)''
+log_directory = "{{ server.log_dir }}"
+file_match = 'access\.log\.?(?P<Index>\d+)?(.gz)(?P<Index>\d*)'
 priority = ["^Index"]
 decoder = "Sandbox_apache_access"
 
 [logstreamer_apache_site_access]
 type = "LogstreamerInput"
-log_directory = "/var/log/apache"
+log_directory = "{{ server.log_dir }}"
 file_match = '(?P<SiteName>.+)-access\.log\.?(?P<Index>\d*)'
 priority = ["^Index"]
 differentiator = ["apache-", "SiteName", "-access"]
