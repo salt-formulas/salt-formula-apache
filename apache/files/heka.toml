@@ -4,17 +4,32 @@
 [logstreamer_apache_access]
 type = "LogstreamerInput"
 log_directory = "{{ server.log_dir }}"
-file_match = 'access\.log\.?(?P<Index>\d+)?(.gz)(?P<Index>\d*)'
+file_match = 'access\.log\.?(?P<Index>\d+)?(\.gz)?'
 priority = ["^Index"]
 decoder = "Sandbox_apache_access"
 
 [logstreamer_apache_site_access]
 type = "LogstreamerInput"
 log_directory = "{{ server.log_dir }}"
-file_match = '(?P<SiteName>.+)-access\.log\.?(?P<Index>\d*)'
+file_match = '(?P<SiteName>.+)[\.\-]access\.log\.?(?P<Index>\d*)?(\.gz)?'
 priority = ["^Index"]
 differentiator = ["apache-", "SiteName", "-access"]
-decoder = "Sandbox_apache_access"
+decoder = "Sandbox_apache_access_vhost"
+
+[logstreamer_apache_error]
+type = "LogstreamerInput"
+log_directory = "{{ server.log_dir }}"
+file_match = 'error\.log\.?(?P<Index>\d+)?(\.gz)?'
+priority = ["^Index"]
+decoder = "Sandbox_apache_error"
+
+[logstreamer_apache_site_error]
+type = "LogstreamerInput"
+log_directory = "{{ server.log_dir }}"
+file_match = '(?P<SiteName>.+)[\.\-]error\.log\.?(?P<Index>\d*)?(\.gz)?'
+priority = ["^Index"]
+differentiator = ["apache-", "SiteName", "-error"]
+decoder = "Sandbox_apache_error"
 
 ## Sandboxes
 
@@ -25,4 +40,20 @@ filename = "lua_decoders/apache_access.lua"
 [Sandbox_apache_access.config]
 type = "apache_combined"
 user_agent_transform = true
-log_format = '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"'
+log_format = '%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"'
+
+[Sandbox_apache_access_vhost]
+type = "SandboxDecoder"
+filename = "lua_decoders/apache_access.lua"
+
+[Sandbox_apache_access_vhost.config]
+type = "apache_combined_vhost"
+user_agent_transform = true
+log_format = '%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"'
+
+[Sandbox_apache_error]
+type = "SandboxDecoder"
+filename = "lua_decoders/apache_error.lua"
+
+[Sandbox_apache_error.config]
+type = "apache_error"
