@@ -6,3 +6,21 @@ check:
     occurrences: 1
     subscribers:
     - local-apache-server
+  local_apache_server:
+    command: "PATH=$PATH:/etc/sensu/plugins check_apache2.sh -H localhost -P {{ site.host.get('port', '80') }} -t 3 -wr 100 -cr 250"
+    interval: 60
+    occurrences: 1
+    subscribers:
+    - local-apache-server
+  {%- for site_name, site in server.get('site', {}).iteritems() %}
+  {%- if site.enabled %}
+  {%- if site.get('check', True) %}
+  remote_apache_server_http_{{ site.host.name }}_{{ site.host.get('port', '80') }}:
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_http -H {{ site.host.name }} -p {{ site.host.get('port', '80') }} -w 5 -c 10 -f follow{% if site.get('ssl', {}).get('enabled', False) %} -S{% endif %}{% if site.auth is defined %} -e 'HTTP/1.1 401 Unauthorized'{% endif %}"
+    interval: 60
+    occurrences: 2
+    subscribers:
+    - remote-network
+  {%- endif %}
+  {%- endif %}
+  {%- endfor %}
