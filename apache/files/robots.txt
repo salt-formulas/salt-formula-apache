@@ -1,0 +1,13 @@
+{%- set robots = salt['pillar.get']('apache:server:robots:'+robots_name) -%}
+{%- for robot, opts in robots.iteritems() -%}
+User-agent: {% if robot == 'all' %}*{% else %}{{ robot }}{% endif %}
+{%- if opts.disallow %}
+{%- for path in opts.disallow %}
+Disallow: {{ path }}
+{%- endfor %}
+{%- else %}
+Disallow:
+{%- endif %}
+{%- endfor %}
+
+{#- vim: syntax=jinja -#}

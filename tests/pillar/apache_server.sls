@@ -9,12 +9,18 @@ apache:
         enabled: true
         password: cloudlab
         htpasswd: cloudlab.htpasswd
+    robots:
+      default:
+        all:
+          disallow:
+            - /
     site:
       roundcube:
         enabled: true
         type: static
         name: roundcube
         root: /usr/share/roundcube
+        robots: default
         locations:
           - uri: /admin
             path: /usr/share/postfixadmin

@@ -16,20 +16,20 @@ priority = ["^Index"]
 differentiator = ["apache-", "SiteName", "-access"]
 decoder = "Sandbox_apache_access_vhost"
 
-[logstreamer_apache_error]
-type = "LogstreamerInput"
-log_directory = "{{ server.log_dir }}"
-file_match = 'error\.log\.?(?P<Index>\d+)?(\.gz)?'
-priority = ["^Index"]
-decoder = "Sandbox_apache_error"
-
-[logstreamer_apache_site_error]
-type = "LogstreamerInput"
-log_directory = "{{ server.log_dir }}"
-file_match = '(?P<SiteName>.+)[\.\-]error\.log\.?(?P<Index>\d*)?(\.gz)?'
-priority = ["^Index"]
-differentiator = ["apache-", "SiteName", "-error"]
-decoder = "Sandbox_apache_error"
+#[logstreamer_apache_error]
+#type = "LogstreamerInput"
+#log_directory = "{{ server.log_dir }}"
+#file_match = 'error\.log\.?(?P<Index>\d+)?(\.gz)?'
+#priority = ["^Index"]
+#decoder = "Sandbox_apache_error"
+#
+#[logstreamer_apache_site_error]
+#type = "LogstreamerInput"
+#log_directory = "{{ server.log_dir }}"
+#file_match = '(?P<SiteName>.+)[\.\-]error\.log\.?(?P<Index>\d*)?(\.gz)?'
+#priority = ["^Index"]
+#differentiator = ["apache-", "SiteName", "-error"]
+#decoder = "Sandbox_apache_error"
 
 ## Sandboxes
 
@@ -51,9 +51,9 @@ type = "apache_combined_vhost"
 user_agent_transform = true
 log_format = '%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"'
 
-[Sandbox_apache_error]
-type = "SandboxDecoder"
-filename = "lua_decoders/decoders/apache_error.lua"
-
-[Sandbox_apache_error.config]
-type = "apache_error"
+#[Sandbox_apache_error]
+#type = "SandboxDecoder"
+#filename = "lua_decoders/decoders/apache_error.lua"
+#
+#[Sandbox_apache_error.config]
+#type = "apache_error"
