@@ -1,8 +1,12 @@
 {%- from "apache/map.jinja" import server with context %}
 
 include:
+{%- if server.modules is defined %}
 - apache.server.service.modules
+{%- endif %}
+{%- if server.mpm is defined %}
 - apache.server.service.mpm
+{%- endif %}
 
 {%- if server.enabled %}
 
