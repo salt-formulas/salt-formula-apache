@@ -2,13 +2,13 @@
 check:
   local_apache_server_proc:
     command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -C apache2 -u root -c 1:1"
-    interval: 60
-    occurrences: 1
+    interval: 30
+    occurrences: 3
     subscribers:
     - local-apache-server
   local_apache_server:
     command: "PATH=$PATH:/etc/sensu/plugins check_apache2.sh -H localhost -P {{ server.bind.get('ports', [80]).0 }} -t 3 -wr 100 -cr 250"
-    interval: 60
+    interval: 120
     occurrences: 1
     subscribers:
     - local-apache-server
