@@ -1,0 +1,14 @@
+{%- from "apache/map.jinja" import server, listen_ports with context -%}
+{%- for port in listen_ports.iterkeys() -%}
+
+iptables:
+  rules:
+    - destination_port: {{ port }}
+      protocol: tcp
+      jump: ACCEPT
+
+{%- endfor -%}
+
+{#-
+vim: syntax=jinja
+-#}
