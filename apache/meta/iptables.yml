@@ -1,13 +1,21 @@
 {%- from "apache/map.jinja" import server, listen_ports with context -%}
-{%- for port in listen_ports.iterkeys() -%}
-
 iptables:
   rules:
+{%- for port in listen_ports.iterkeys() %}
     - destination_port: {{ port }}
       protocol: tcp
       jump: ACCEPT
-
-{%- endfor -%}
+{%- endfor %}
+{%- if 443 not in listen_ports.keys() %}
+    - destination_port: 443
+      protocol: tcp
+      jump: ACCEPT
+{%- endif %}
+{%- if 80 not in listen_ports.keys() %}
+    - destination_port: 80
+      protocol: tcp
+      jump: ACCEPT
+{%- endif %}
 
 {#-
 vim: syntax=jinja
