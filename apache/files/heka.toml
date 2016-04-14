@@ -51,7 +51,7 @@ type = "apache_combined_vhost"
 user_agent_transform = true
 log_format = '%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"'
 
-Sandbox_apache_error]
+[Sandbox_apache_error]
 type = "SandboxDecoder"
 filename = "lua_decoders/decoders/apache-error.lua"
 
