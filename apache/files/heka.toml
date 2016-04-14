@@ -53,7 +53,7 @@ log_format = '%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"
 
 [Sandbox_apache_error]
 type = "SandboxDecoder"
-filename = "lua_decoders/decoders/apache_error.lua"
+filename = "lua_decoders/decoders/apache-error.lua"
 
 [Sandbox_apache_error.config]
 type = "apache_error"
