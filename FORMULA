@@ -1,0 +1,8 @@
+name: apache
+os: Arch, Debian, RedHat
+os_family: Arch, Debian, RedHat
+version: 201606
+release: 1
+summary: Apache Salt formula
+description: Install and configure Apache webserver.
+top_level_dir: apache
