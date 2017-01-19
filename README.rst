@@ -150,6 +150,28 @@ Tune security settings (these are default):
           # Set X-Frame-Options
           frame_options: sameorigin
 
+Tune the log configuration:
+
+.. code-block:: yaml
+
+    parameters:
+      apache:
+        server:
+          site:
+            foo:
+              enabled: true
+              type: static
+              log:
+                custom:
+                  enabled: true
+                  file: /var/log/apache2/mylittleponysitecustom.log
+                  format: >-
+                     %{X-Forwarded-For}i %l %u %t \"%r\" %>s %b %D \"%{Referer}i\" \"%{User-Agent}i\"
+                error:
+                  enabled: false
+                  file: /var/log/apache2/foo.error.log
+                  level: notice
+
 Example pillar
 ==============
 
