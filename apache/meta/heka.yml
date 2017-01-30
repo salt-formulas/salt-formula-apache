@@ -1,8 +1,7 @@
 {%- from "apache/map.jinja" import server with context %}
-{%- if server.get('enabled', False) and server.site is defined %}
+{%- if server.get('enabled', False) and server.get('site', {}).selectattr("type", "keystone")|length > 0 %}
 
 log_collector:
-{%- if server.site|length > 0 %}
   decoder:
 {%- for site_name, site in server.site.iteritems() %}
 {%- if site.type == 'keystone' %}
@@ -15,7 +14,6 @@ log_collector:
           {{ site.get('log', {}).get('custom', {}).format|default('vhost_combined') }}
 {%- endif %}
 {%- endfor %}
-{%- endif %}
 
   input:
 {%- for site_name, site in server.site.iteritems() %}
