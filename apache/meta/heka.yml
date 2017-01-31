@@ -1,5 +1,5 @@
 {%- from "apache/map.jinja" import server with context %}
-{%- if server.get('enabled', False) and server.get('site', {})|selectattr("type", "keystone")|length > 0 %}
+{%- if server.get('enabled', False) and server.get('site', {}).values()|selectattr("type", "equalto", "keystone")|list|length > 0 %}
 
 log_collector:
   decoder:
