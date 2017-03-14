@@ -21,7 +21,7 @@ apache_php_package:
   - require:
     - pkg: apache_packages
 
-{%- set module = 'php5' %}
+{%- set module = server.module_php %}
 
 {%- endif %}
 
@@ -71,8 +71,10 @@ apache_{{ module }}_enable:
   - creates: /etc/apache2/mods-enabled/{{ module }}.load
   - require:
     - pkg: apache_packages
+  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
+  {% endif %}
 
 {%- endfor %}
 
