@@ -1,0 +1,19 @@
+dashboard:
+  apache:
+    format: json
+    template: apache/files/grafana_dashboards/apache_influxdb.json
+  main:
+    row:
+      ost-middleware:
+        title: Middleware
+        panel:
+          apache:
+            title: Apache
+            links:
+            - dashboard: Apache
+              title: Apache
+              type: dashboard
+            target:
+              cluster_status:
+                rawQuery: true
+                query: SELECT last(value) FROM cluster_status WHERE cluster_name = 'apache' AND environment_label = '$environment' AND $timeFilter GROUP BY time($interval) fill(null)
