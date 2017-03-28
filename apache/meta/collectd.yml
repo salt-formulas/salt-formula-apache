@@ -1,5 +1,9 @@
-plugin:
+{%- from "apache/map.jinja" import server with context %}
+{%- if server.get('enabled', False) %}
+local_plugin:
   apache_server_status:
-    plugin: apache
-    interval: 60
     template: apache/files/collectd_apache.conf
+  collectd_apache_check:
+    plugin: python
+    template: apache/files/collectd_apache_check.conf
+{%- endif %}

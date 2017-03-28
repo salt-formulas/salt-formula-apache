@@ -31,3 +31,75 @@ log_collector:
 {%- endfor %}
 
 {%- endif %}
+{%- if server.get('enabled', False) %}
+metric_collector:
+  trigger:
+    apache_check:
+      description: 'Apache service cannot be checked'
+      severity: down
+      rules:
+      - metric: apache_check
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    apache_idle_workers:
+      description: 'There is no Apache idle workers available'
+      severity: warning
+      rules:
+      - metric: apache_idle_workers
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: min
+  alarm:
+    apache_check:
+      alerting: enabled
+      triggers:
+      - apache_check
+      dimension:
+        service: apache-check
+    apache_idle_workers:
+      alerting: enabled
+      triggers:
+      - apache_idle_workers
+      dimension:
+        service: apache-idle-workers
+aggregator:
+  alarm_cluster:
+    apache_check:
+      policy: availability_of_members
+      alerting: enabled
+      match:
+        service: apache-check
+      group_by: hostname
+      members:
+      - apache_check
+      dimension:
+        service: apache
+        nagios_host: 01-service-clusters
+    apache_idle_workers:
+      policy: availability_of_members
+      alerting: enabled
+      match:
+        service: apache-idle-workers
+      group_by: hostname
+      members:
+      - apache_idle_workers
+      dimension:
+        service: apache
+        nagios_host: 01-service-clusters
+    apache:
+      policy: highest_severity
+      alerting: enabled_with_notification
+      match:
+        service: apache
+      members:
+      - apache_check
+      - apache_idle_workers
+      dimension:
+        cluster_name: apache
+        nagios_host: 00-top-clusters
+{%- endif %}
