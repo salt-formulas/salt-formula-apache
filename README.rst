@@ -1,37 +1,11 @@
-======
-Apache
-======
+==============
+Apache Formula
+==============
 
 Install and configure Apache webserver
 
-Available states
-================
-
-.. contents::
-    :local:
-
-``apache.server``
---------------------
-
-Setup apache server
-
-Available metadata
-==================
-
-.. contents::
-    :local:
-
-``metadata.apache.server.single``
---------------------------
-
-Setup basic server
-
-Configuration parameters
-========================
-
-
-Example reclass
-===============
+Sample Pillars
+==============
 
 Simple Apache proxy
 
@@ -150,7 +124,7 @@ Tune security settings (these are default):
           # Set X-Frame-Options
           frame_options: sameorigin
 
-Tune the log configuration:
+Tuned up log configuration.
 
 .. code-block:: yaml
 
@@ -171,9 +145,6 @@ Tune the log configuration:
                   enabled: false
                   file: /var/log/apache2/foo.error.log
                   level: notice
-
-Example pillar
-==============
 
 Roundcube webmail, postfixadmin and mailman
 
@@ -212,10 +183,12 @@ Roundcube webmail, postfixadmin and mailman
                   - mail01.example.com
                   - mail01
 
-Read more
-=========
+
+More Information
+================
 
 * https://httpd.apache.org/docs/
+
 
 Documentation and Bugs
 ======================
