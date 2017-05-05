@@ -7,7 +7,11 @@ doc:
       name: server
       param:
         version:
-          value: "{{ salt['apache.version']()|replace("Apache/", '') }}"
+          {%- if 'apache.version' in salt.keys() %}
+          value: "{{ salt['apache.version']()|replace('Apache/', '') }}"
+          {%- else %}
+          value: "unknown"
+          {%- endif %}
       endpoint:
   {%- for site_name, site in server.get('site', {}).iteritems() %}
   {%- if site.enabled %}
@@ -18,3 +22,7 @@ doc:
           protocol: http{% if site.get('ssl', {}).get('enabled', False) %}s{% endif %}
   {%- endif %}
   {%- endfor %}
+
+{#-
+  vim: syntax=jinja
+-#}
