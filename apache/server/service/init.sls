@@ -16,7 +16,7 @@ apache_packages:
 
 apache_ports_config:
   file.managed:
-  - name: /etc/apache2/ports.conf
+  - name: {{ server.conf_dir }}/ports.conf
   - source: salt://apache/files/ports.conf
   - template: jinja
   - require:
@@ -48,7 +48,6 @@ apache_security_config:
   - watch_in:
     - service: apache_service
   {% endif %}
-{%- endif %}
 
 {% if not grains.get('noservices', False) %}
 /etc/apache2/sites-enabled/000-default.conf:
@@ -57,6 +56,28 @@ apache_security_config:
       - service: apache_service
 {% endif %}
 
+{%- elif grains.os_family == "RedHat" %}
+apache_httpd_config:
+  file.managed:
+  - name: /etc/httpd/conf/httpd.conf
+  - source: salt://apache/files/httpd.conf
+  - template: jinja
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
+apache_conf_d_ssl_config:
+  file.managed:
+  - name: /etc/httpd/conf.d/ssl.conf
+  - source: salt://apache/files/redhat_ssl.conf
+  - template: jinja
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
+{%- endif %}
 
 {% if not grains.get('noservices', False) %}
 

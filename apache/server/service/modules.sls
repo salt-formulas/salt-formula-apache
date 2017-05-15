@@ -65,6 +65,7 @@ apache_auth_kerb_package:
 
 {%- endif %}
 
+{%- if grains.os_family == "Debian" %}
 apache_{{ module }}_enable:
   cmd.run:
   - name: "a2enmod {{ module }}"
@@ -75,6 +76,7 @@ apache_{{ module }}_enable:
   - watch_in:
     - service: apache_service
   {% endif %}
+{%- endif %}
 
 {%- endfor %}
 
