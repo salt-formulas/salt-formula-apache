@@ -71,10 +71,8 @@ apache_{{ module }}_enable:
   - creates: /etc/apache2/mods-enabled/{{ module }}.load
   - require:
     - pkg: apache_packages
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 {%- endfor %}
 
