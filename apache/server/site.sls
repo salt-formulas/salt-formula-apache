@@ -20,10 +20,8 @@
     site_name: "{{ site_name }}"
   - require:
     - pkg: apache_packages
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 {%- if site.get('webdav', {}).get('enabled', False) %}
 {{ site.name }}_webdav_dir:
@@ -87,10 +85,8 @@
   - target: {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
   - require:
     - file: {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}:
   file.absent

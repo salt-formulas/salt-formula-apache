@@ -4,6 +4,7 @@ apache:
     modules:
       - cgi
       - php
+    module_php: php5
     user:
       cloudlab:
         enabled: true

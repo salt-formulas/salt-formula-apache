@@ -21,10 +21,8 @@ apache_ports_config:
   - template: jinja
   - require:
     - pkg: apache_packages
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 apache_security_config:
   file.managed:
@@ -33,10 +31,8 @@ apache_security_config:
   - template: jinja
   - require:
     - pkg: apache_packages
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 {%- if grains.os_family == "Debian" %}
 /etc/apache2/conf-enabled/security.conf:
@@ -44,10 +40,7 @@ apache_security_config:
   - target: {{ server.conf_dir }}/security.conf
   - require:
     - file: {{ server.conf_dir }}/security.conf
-  {% if not grains.get('noservices', False) %}
-  - watch_in:
     - service: apache_service
-  {% endif %}
 {%- endif %}
 
 {% if not grains.get('noservices', False) %}
@@ -57,24 +50,25 @@ apache_security_config:
       - service: apache_service
 {% endif %}
 
-
-{% if not grains.get('noservices', False) %}
-
 apache_service:
   service.running:
   - name: {{ server.service }}
   - reload: true
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - require:
     - pkg: apache_packages
-
-{% endif%}
 
 {%- else %}
 
 apache_service_dead:
   service.dead:
   - name: {{ server.service }}
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
 
 apache_remove_packages:
   pkg.purged:
