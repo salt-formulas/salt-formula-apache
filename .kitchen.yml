@@ -37,8 +37,9 @@ platforms:
 
 suites:
 
-  - name: apache_server
+  - name: <%=ENV['SUITE'] || 'apache_server_php7'%>
     provisioner:
       pillars-from-files:
-        apache.sls: tests/pillar/apache_server.sls
+        apache.sls: tests/pillar/<%=ENV['SUITE'] || 'apache_server_php7'%>.sls
+
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125
