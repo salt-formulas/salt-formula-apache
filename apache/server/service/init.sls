@@ -55,9 +55,9 @@ apache_service:
   - name: {{ server.service }}
   - reload: true
   - enable: true
-  {% if grains.noservices is defined %}
-  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
-  {% endif %}
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - require:
     - pkg: apache_packages
 
@@ -66,9 +66,9 @@ apache_service:
 apache_service_dead:
   service.dead:
   - name: {{ server.service }}
-  {% if grains.noservices is defined %}
-  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
-  {% endif %}
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
 
 apache_remove_packages:
   pkg.purged:
