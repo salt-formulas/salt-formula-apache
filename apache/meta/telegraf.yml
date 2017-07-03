@@ -1,0 +1,9 @@
+{%- from "apache/map.jinja" import server with context %}
+{%- if server is defined and server.get('enabled', False) and server.get('bind', {}).get('address') %}
+  {%- set ports = server.get('bind', {}).get('ports', [80]) %}
+agent:
+  input:
+    apache:
+      template: apache/files/telegraf.conf
+      urls: [ "http://{{ server.bind.address|replace('0.0.0.0', '127.0.0.1') }}:{{ ports|sort|first }}/server-status?auto" ]
+{%- endif %}
