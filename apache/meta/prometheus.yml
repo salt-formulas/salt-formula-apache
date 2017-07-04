@@ -1,0 +1,26 @@
+{%- from "apache/map.jinja" import server with context %}
+
+{%- if server.get('enabled', False) %}
+{%- raw %}
+server:
+  alert:
+    ApacheDown:
+      if: >-
+        apache_up != 1
+      labels:
+        severity: warning
+        service: apache
+      annotations:
+        summary: 'Apache service down'
+        description: 'Apache service is down on node {{ $labels.host }}'
+    ApacheIdleWorkersShortage:
+      if: >-
+        apache_IdleWorkers == 0
+      labels:
+        severity: warning
+        service: apache
+      annotations:
+        summary: 'Apache idle workers shortage'
+        description: 'Apache idle workers shortage on node {{ $labels.host }}'
+{%- endraw %}
+{%- endif %}
