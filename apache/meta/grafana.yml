@@ -1,8 +1,14 @@
 dashboard:
-  apache:
+  apache_influxdb:
+    datasource: influxdb
     format: json
     template: apache/files/grafana_dashboards/apache_influxdb.json
+  apache_prometheus:
+    datasource: prometheus
+    format: json
+    template: apache/files/grafana_dashboards/apache_prometheus.json
   main:
+    datasource: influxdb
     row:
       ost-middleware:
         title: Middleware
