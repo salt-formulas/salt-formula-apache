@@ -15,9 +15,10 @@ log_collector:
 {%- if site.type == 'keystone' %}
     keystone_wsgi:
       engine: sandbox
-      module_file: /usr/share/lma_collector/decoders/keystone_wsgi_log.lua
+      module_file: /usr/share/lma_collector/decoders/apache_wsgi_log.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
+        logger: openstack.keystone
         apache_log_pattern: >-
           {{ site.get('log', {}).get('custom', {}).format|default('vhost_combined') }}
 {%- endif %}
