@@ -17,9 +17,8 @@ install:
   - bundle install
 
 env:
-    - PLATFORM=trevorj/salty-whales:trusty PHP_VERSION=php5
-    - PLATFORM=trevorj/salty-whales:xenial PHP_VERSION=php7
-
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=apache_server_php5
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=apache_server_php7
 
 before_script:
   - set -o pipefail
