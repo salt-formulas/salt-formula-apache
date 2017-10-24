@@ -13,7 +13,7 @@ provisioner:
   log_level: error
   formula: apache
   grains:
-    noservices: True
+    noservices: False
   state_top:
     base:
       "*":
