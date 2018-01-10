@@ -17,15 +17,16 @@ install:
   - bundle install
 
 env:
-    - PLATFORM=trevorj/salty-whales:trusty SUITE=apache_server_php5
-    - PLATFORM=trevorj/salty-whales:xenial SUITE=apache_server_php7
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=apache-server-php5
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=apache-server-php7
 
 before_script:
   - set -o pipefail
   - make test | tail
 
 script:
-  - test ! -e .kitchen.yml || bundle exec kitchen test -t tests/integration
+  - test ! -e .kitchen.yml || bundle exec kitchen converge ${SUITE} || true
+  - test ! -e .kitchen.yml || bundle exec kitchen verify ${SUITE} -t tests/integration
 
 notifications:
   webhooks:
