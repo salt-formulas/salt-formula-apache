@@ -10,6 +10,6 @@ Vcs-Git: https://github.com/tcpcloud/salt-formula-apache.git
 
 Package: salt-formula-apache
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass
+Depends: ${misc:Depends}
 Description: Apache Salt formula
  Install and configure Apache webserver.
