@@ -44,6 +44,7 @@
 {%- endfor %}
 
 {%- if site.get('ssl', {'enabled': False}).enabled and site.host.name not in ssl_certificates.keys() %}
+  {%- if 'key_file' not in site.get('ssl') %}
 {%- set _dummy = ssl_certificates.update({site.host.name: []}) %}
 
 /etc/ssl/certs/{{ site.host.name }}.crt:
@@ -75,6 +76,16 @@
   {%- endif %}
   - require:
     - pkg: apache_packages
+
+  {%- else %}
+    {%- set certs_files = [ site.ssl.key_file, site.ssl.cert_file] %}
+    {%- if site.ssl.chain_file is defined %}
+      {%- do certs_files.append(site.ssl.chain_file) %}
+    {%- endif %}
+{{ site.name }}_certs_files_exist:
+ file.exists:
+   - names: {{ certs_files }}
+  {%- endif %}
 
 {%- endif %}
 
