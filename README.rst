@@ -146,6 +146,32 @@ Tuned up log configuration.
                   file: /var/log/apache2/foo.error.log
                   level: notice
 
+Apache wsgi application.
+
+.. code-block:: yaml
+
+    apache:
+      server:
+        enabled: true
+        default_mpm: event
+        site:
+          manila:
+            enabled: false
+            available: true
+            type: wsgi
+            name: manila
+            wsgi:
+              daemon_process: manila-api
+              threads: 2
+              user: manila
+              group: manila
+              display_name: '%{GROUP}'
+              script_alias: '/ /usr/bin/manila-wsgi'
+              application_group: '%{GLOBAL}'
+              authorization: 'On'
+            limits:
+              request_body: 114688
+
 Roundcube webmail, postfixadmin and mailman
 
 .. code-block:: yaml

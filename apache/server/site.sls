@@ -6,11 +6,11 @@
 
 {%- for site_name, site in server.site.iteritems() %}
 
-{% if site.enabled %}
+{% if site.enabled or site.get('available', False) %}
 
 {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}:
   file.managed:
-  {%- if site.type in ['proxy', 'redirect', 'static', 'stats'] %}
+  {%- if site.type in ['proxy', 'redirect', 'static', 'stats', 'wsgi' ] %}
   - source: salt://apache/files/{{ site.type }}.conf
   {%- else %}
   - source: salt://{{ site.type }}/files/apache.conf
@@ -91,6 +91,8 @@
 
 {%- if grains.os_family == "Debian" %}
 
+{%- if site.enabled %}
+
 /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}:
   file.symlink:
   - target: {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
@@ -101,6 +103,7 @@
 
 /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}:
   file.absent
+{%- endif %}
 
 {%- endif %}
 
