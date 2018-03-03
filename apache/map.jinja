@@ -102,7 +102,7 @@
 {# TODO: move away from managing listen in ports.conf, instead add this directive #}
 {# to specific service config. Currently it conflits with horizon formula, that manage #}
 {# port.conf by theirown, it leads to races when applying horizon/apache states. #}
-{%- if site.get('type', '') != 'wsgi' %}
+{%- if site.get('type', '') not in ['wsgi', 'proxy'] %}
 {%- if site.host.get('port', 80) %}
 {%- do listen_ports.update({site.host.get('port', 80): None}) %}
 {%- endif %}
