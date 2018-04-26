@@ -16,6 +16,10 @@
         'www_dir': '/var/www',
         'service_user': 'www-data',
         'service_group': 'www-data',
+        'logrotate': {
+          'start_period': '1',
+          'end_period': '3600',
+        },
     },
     'Arch': {
         'pkgs': ['apache'],
@@ -75,6 +79,10 @@
         'www_dir': '/var/www',
         'service_user': 'www-data',
         'service_group': 'www-data',
+        'logrotate': {
+          'start_period': '1',
+          'end_period': '3600',
+        },
     },
     'xenial': {
         'pkgs': ['apache2'],
@@ -93,6 +101,10 @@
         'www_dir': '/var/www',
         'service_user': 'www-data',
         'service_group': 'www-data',
+        'logrotate': {
+          'start_period': '1',
+          'end_period': '3600',
+        },
     },
 }, grain='oscodename', merge=salt['pillar.get']('apache:server'))) %}
 
