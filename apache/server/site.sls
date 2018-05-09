@@ -56,6 +56,10 @@
   {%- endif %}
   - require:
     - pkg: apache_packages
+  {%- if site.enabled %}
+  - require_in:
+    - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+  {%- endif %}
 
 /etc/ssl/private/{{ site.host.name }}.key:
   file.managed:
@@ -66,6 +70,10 @@
   {%- endif %}
   - require:
     - pkg: apache_packages
+  {%- if site.enabled %}
+  - require_in:
+    - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+  {%- endif %}
 
 /etc/ssl/certs/{{ site.host.name }}-ca-chain.crt:
   file.managed:
@@ -76,6 +84,10 @@
   {%- endif %}
   - require:
     - pkg: apache_packages
+  {%- if site.enabled %}
+  - require_in:
+    - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+  {%- endif %}
 
   {%- else %}
     {%- set certs_files = [ site.ssl.key_file, site.ssl.cert_file] %}
@@ -83,9 +95,13 @@
       {%- do certs_files.append(site.ssl.chain_file) %}
     {%- endif %}
 {{ site.name }}_certs_files_exist:
- file.exists:
-   - names: {{ certs_files }}
-  {%- endif %}
+  file.exists:
+    - names: {{ certs_files }}
+    {%- if site.enabled %}
+    - require_in:
+      - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+    {%- endif %}
+{%- endif %}
 
 {%- endif %}
 
