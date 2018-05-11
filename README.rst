@@ -209,6 +209,17 @@ Roundcube webmail, postfixadmin and mailman
                   - mail01.example.com
                   - mail01
 
+Logrotate settings which allow you to rotate the logs in
+a random time in a given time interval. Time in seconds
+
+.. code-block:: yaml
+
+  apache:
+    server:
+      logrotate:
+        start_period: 600
+        end_period: 1200
+
 
 More Information
 ================
