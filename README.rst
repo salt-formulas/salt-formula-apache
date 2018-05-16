@@ -172,6 +172,68 @@ Apache wsgi application.
             limits:
               request_body: 114688
 
+Apache ssl cipher management
+
+.. code-block:: yaml
+
+    parameters:
+      apache:
+        server:
+          enabled: true
+          site:
+            example:
+              enabled: true
+              ssl:
+                enabled: true
+                mode: secure
+                ...
+
+.. code-block:: yaml
+
+    parameters:
+      apache:
+        server:
+          enabled: true
+          site:
+            example:
+              enabled: true
+              ssl:
+                enabled: true
+                mode: normal
+                ...
+
+.. code-block:: yaml
+
+    parameters:
+      apache:
+        server:
+          enabled: true
+          site:
+            example:
+              enabled: true
+              ssl:
+                enabled: true
+                mode: strict
+                ciphers:
+                  ECDHE_RSA_AES256_GCM_SHA384:
+                    name: 'ECDHE-RSA-AES256-GCM-SHA384'
+                    enabled: True
+                  ECDHE_ECDSA_AES256_GCM_SHA384:
+                    name: 'ECDHE-ECDSA-AES256-GCM-SHA384'
+                    enabled: True
+                protocols:
+                  TLS1:
+                    name: 'TLSv1'
+                    enabled: True
+                  TLS1_1:
+                    name: 'TLSv1.1'
+                    enabled: True
+                  TLS1_2:
+                    name: 'TLSv1.2'
+                    enabled: False
+                prefer_server_ciphers: 'on'
+                ...
+
 Roundcube webmail, postfixadmin and mailman
 
 .. code-block:: yaml
