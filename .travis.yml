@@ -17,11 +17,13 @@ install:
   - bundle install
 
 env:
-    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-trusty-salt-2017.7 SUITE=apache-server-php5
-    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-trusty-salt-2016.3 SUITE=apache-server-php5
-    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=apache-server-php7
-    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=apache-server-php7
-#    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=apache-server-php7
+    - PLATFORM=epcim/salt:saltstack-ubuntu-trusty-salt-2016.3 SUITE=apache-server-php5
+    - PLATFORM=epcim/salt:saltstack-ubuntu-trusty-salt-2017.7 SUITE=apache-server-php5
+    - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=apache-server-php7
+    - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=apache-server-php7
+    - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=apache-server-php7
+#    - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=apache-server-php7
+#    - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=apache-server-php7
 
 before_script:
   - set -o pipefail
