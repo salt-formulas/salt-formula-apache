@@ -1,7 +1,7 @@
 
 {% set server = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['apache2'],
+        'pkgs': ['apache2', 'openssl'],
         'service': 'apache2',
         'mod_wsgi': 'libapache2-mod-wsgi',
         'mod_php': 'libapache2-mod-php5',
@@ -22,7 +22,7 @@
         },
     },
     'Arch': {
-        'pkgs': ['apache'],
+        'pkgs': ['apache', 'openssl'],
         'service': 'httpd',
         'mod_wsgi': 'wsgi-apache',
         'mod_php': 'php-apache',
@@ -36,7 +36,7 @@
         'service_group': 'apache',
     },
     'RedHat': {
-        'pkgs': ['httpd'],
+        'pkgs': ['httpd', 'openssl'],
         'service': 'httpd',
         'mod_wsgi': 'mod_wsgi',
         'vhost_dir': '/etc/httpd/conf.d',
@@ -49,7 +49,7 @@
         'service_group': 'apache',
     },
     'FreeBSD': {
-        'pkgs': ['apache22'],
+        'pkgs': ['apache22', 'openssl'],
         'service': 'apache22',
         'mod_wsgi': 'ap22-mod_wsgi3',
         'vhost_dir': '/usr/local/etc/apache22/Includes',
@@ -63,7 +63,7 @@
     },
 }, merge=salt['grains.filter_by']({
     'trusty': {
-        'pkgs': ['apache2', 'apache2-utils'],
+        'pkgs': ['apache2', 'apache2-utils', 'openssl'],
         'service': 'apache2',
         'mod_wsgi': 'libapache2-mod-wsgi',
         'mod_php': 'libapache2-mod-php5',
@@ -85,7 +85,7 @@
         },
     },
     'xenial': {
-        'pkgs': ['apache2'],
+        'pkgs': ['apache2', 'openssl'],
         'service': 'apache2',
         'mod_wsgi': 'libapache2-mod-wsgi',
         'mod_php': 'libapache2-mod-php7.0',

@@ -234,6 +234,164 @@ Apache ssl cipher management
                 prefer_server_ciphers: 'on'
                 ...
 
+Advanced SSL configuration, more information about SSL options can be found
+at https://httpd.apache.org/docs/2.4/mod/mod_ssl.html
+!Please note that if mode = 'secure' or mode = 'normal' and 'ciphers' or 'protocols' are set - they should have
+type "string", if mode = 'manual', their type should be "dict" (like shown below)
+
+SSL settings on SITE level:
+
+.. code-block:: yaml
+
+    parameters:
+      apache:
+        server:
+          enabled: true
+          site:
+            example:
+              enabled: true
+              ssl:
+                enabled: true
+                engine: salt
+                authority: "${_param:salt_minion_ca_authority}"
+                key_file: "/etc/ssl/private/internal_proxy.key"
+                cert_file: "/etc/ssl/certs/internal_proxy.crt"
+                chain_file: "/etc/ssl/certs/internal_proxy-with-chain.crt"
+                mode: 'strict'
+                session_timeout: '300'
+                protocols:
+                  TLS1:
+                    name: 'TLSv1'
+                    enabled: True
+                  TLS1_1:
+                    name: 'TLSv1.1'
+                    enabled: True
+                  TLS1_2:
+                    name: 'TLSv1.2'
+                    enabled: False
+                ciphers:
+                  ECDHE_RSA_AES256_GCM_SHA384:
+                    name: 'ECDHE-RSA-AES256-GCM-SHA384'
+                    enabled: True
+                  ECDHE_ECDSA_AES256_GCM_SHA384:
+                    name: 'ECDHE-ECDSA-AES256-GCM-SHA384'
+                    enabled: True
+                prefer_server_ciphers: "off"
+                dhparam:
+                  enabled: True
+                  numbits: 2048
+                ecdh_curve:
+                  secp384r1:
+                    name: 'secp384r1'
+                    enabled: False
+                secp521r1:
+                    name: 'secp521r1'
+                    enabled: True
+                ticket_key:
+                  enabled: True
+                  numbytes: 48
+                session_tickets: 'on'
+                stapling: 'off'
+                crl:
+                  file: '/etc/ssl/crl/crl.pem'
+                  path: '/etc/ssl/crl'
+                  value: 'chain'
+                  enabled: False
+                verify_client: 'none'
+                client_certificate:
+                  file: '/etc/ssl/client_cert.pem'
+                  enabled: False
+                compression: 'off'
+                ssl_engine: 'on'
+                insecure_renegotiation: 'off'
+                ocsp:
+                  default_responder: 'http://responder.example.com:8888/responder'
+                  ocsp_enable: 'off'
+                  override_responder: 'off'
+                  responder_timeout: '50'
+                  max_age: '300'
+                  time_skew: '300'
+                  nonce: 'on'
+                  enabled: True
+                conf_cmd:
+                  sessionticket:
+                    command_name: 'Options'
+                    command_value: '-SessionTicket'
+                    enabled: True
+                  serverpreference:
+                    command_name: 'Options'
+                    command_value: '-ServerPreference'
+                    enabled: False
+                ssl_options:
+                  fakebasicauth:
+                    option: '+FakeBasicAuth'
+                    enabled: 'True'
+                  strictrequire:
+                    option: '-StrictRequire'
+                    enabled: True
+                proxy:
+                  ca_cert_file: '/etc/ssl/client_cert.pem'
+                  ca_cert_path: '/etc/ssl/client/'
+                  crl:
+                    file: '/etc/ssl/crl/crl.pem'
+                    path: '/etc/ssl/crl'
+                    value: 'chain'
+                    enabled: False
+                  check_peer_cn: 'off'
+                  check_peer_expire: 'off'
+                  check_peer_name: 'off'
+                  ciphers:
+                    ECDHE_RSA_AES256_GCM_SHA384:
+                      name: 'ECDHE-RSA-AES256-GCM-SHA384'
+                      enabled: True
+                    ECDHE_ECDSA_AES256_GCM_SHA384:
+                      name: 'ECDHE-ECDSA-AES256-GCM-SHA384'
+                      enabled: False
+                  ssl_engine: 'on'
+                  proxy_chain_file: '/etc/ssl/proxy_chain.pem'
+                  proxy_cert_file: '/etc/ssl/proxy.pem'
+                  proxy_cert_path: '/etc/ssl/proxy'
+                  verify: 'none'
+                  verify_depth: '1'
+                  srp_unknown_seed: 'secret_string'
+                  srp_verifier_file: '/path/to/file.srpv'
+                ssl_stapling:
+                  error_cache_timeout: '600'
+                  fake_try_later: 'off'
+                  stapling_responder: 'http://responder.example.com:8888/responder'
+                  responder_timeout: '600'
+                  response_max_age: '300'
+                  response_time_skew: '300'
+                  responder_errors: 'off'
+                  standard_cache_timeout: '600'
+                sniv_host_check: 'off'
+                verify_depth: '1'
+
+SSL settings on SERVER level:
+
+.. code-block:: yaml
+
+  apache:
+    server:
+      ssl:
+        enabled: True
+        crypto_device: 'rdrand'
+        fips: 'off'
+        passphrase: 'builtin'
+        random_seed:
+          seed1:
+            context: 'startup'
+            source: 'file:/dev/urandom 256'
+            enabled: True
+          seed2:
+            context: 'connect'
+            source: 'builtin'
+            enabled: True
+        session_cache: 'none'
+        stapling_cache: 'default'
+        ssl_user_name: 'SSL_CLIENT_S_DN_CN'
+
+
 Roundcube webmail, postfixadmin and mailman
 
 .. code-block:: yaml

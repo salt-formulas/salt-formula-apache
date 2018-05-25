@@ -8,6 +8,30 @@
 
 {% if site.enabled or site.get('available', False) %}
 
+  {%- if site.get('ssl', {'enabled': False}).enabled %}
+    {%- if site.ssl.get('dhparam', {'enabled': False}).enabled %}
+apache_generate_{{ site_name }}_dhparams:
+  cmd.run:
+  - name: openssl dhparam -out /etc/ssl/dhparams_apache_{{ site_name }}.pem {% if site.ssl.dhparam.numbits is defined %}{{ site.ssl.dhparam.numbits }}{% else %}2048{% endif %}
+  - unless: "test -f /etc/ssl/dhparams_apache_{{ site_name }}.pem && [ $(openssl dhparam -inform PEM -in /etc/ssl/dhparams_apache_{{ site_name }}.pem -check -text | grep -Po 'DH Parameters: \\(\\K[0-9]+') = {% if site.ssl.dhparam.numbits is defined %}{{ site.ssl.dhparam.numbits }}{% else %}2048{% endif %} ]"
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+    {% endif %}
+
+    {%- if site.ssl.get('ticket_key', {'enabled': False}).enabled %}
+apache_generate_{{ site_name }}_ticket_key:
+  cmd.run:
+  - name: openssl rand {% if site.ssl.ticket_key.numbytes is defined %}{{ site.ssl.ticket_key.numbytes }}{% else %}48{% endif %} > /etc/ssl/ticket_apache_{{ site_name }}.key
+  - unless: "test -f /etc/ssl/ticket_apache_{{ site_name }}.key && [ $(wc -c < /etc/ssl/ticket_apache_{{ site_name }}.key) = {% if site.ssl.ticket_key.numbytes is defined %}{{ site.ssl.ticket_key.numbytes }}{% else %}48{% endif %} ]"
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+    {% endif %}
+  {% endif %}
+
 {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}:
   file.managed:
   {%- if site.type in ['proxy', 'redirect', 'static', 'stats', 'wsgi' ] %}
