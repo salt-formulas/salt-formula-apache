@@ -35,6 +35,16 @@ apache_perl_package:
 
 {%- endif %}
 
+{%- if module == 'ssl' %}
+
+apache_perl_package:
+  pkg.installed:
+  - name: {{ server.mod_ssl }}
+  - require:
+    - pkg: apache_packages
+
+{%- endif %}
+
 {%- if module == 'wsgi' %}
 
 apache_wsgi_package:
