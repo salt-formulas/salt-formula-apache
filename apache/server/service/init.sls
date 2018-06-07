@@ -34,6 +34,30 @@ apache_security_config:
   - watch_in:
     - service: apache_service
 
+  {%- if server.ssl is defined %}
+    {%- if server.get('ssl', {'enabled': False}).enabled %}
+apache_httpd_ssl_config:
+  file.managed:
+  - name: {{ server.conf_dir }}/httpd_ssl.conf
+  - source: salt://apache/files/httpd_ssl.conf
+  - template: jinja
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
+      {%- if grains.os_family == "Debian" %}
+apache_httpd_ssl_config_enable:
+  cmd.run:
+  - name: "a2enconf httpd_ssl"
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+      {%- endif %}
+    {%- endif %}
+  {%- endif %}
+
 {%- if grains.os_family == "Debian" %}
 /etc/apache2/conf-enabled/security.conf:
   file.symlink:
