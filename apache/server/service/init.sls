@@ -79,8 +79,6 @@ apache_conf_d_ssl_config:
 
 {%- endif %}
 
-{% if not grains.get('noservices', False) %}
-
 apache_service:
   service.running:
   - name: {{ server.service }}
@@ -88,8 +86,9 @@ apache_service:
   - enable: true
   - require:
     - pkg: apache_packages
-
-{% endif%}
+{%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+{%- endif %}
 
 {%- else %}
 
