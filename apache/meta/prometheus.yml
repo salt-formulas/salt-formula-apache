@@ -24,7 +24,7 @@ server:
         service: apache
       annotations:
         summary: "Apache service outage"
-        description: "All Apache services within the {{ $labels.cluster }} cluster are down."
+        description: "The Apache services within the {{ $labels.cluster }} cluster are down."
       {% endraw %}
     ApacheWorkersAbsent:
       if: >-
@@ -36,6 +36,6 @@ server:
         service: apache
       annotations:
         summary: "Apache has no available idle workers"
-        description: "The Apache service on the {{ $labels.host }} node has no available workers for at least 2 minutes."
+        description: "The Apache service on the {{ $labels.host }} node has no available workers for 2 minutes."
       {%- endraw %}
 {%- endif %}
