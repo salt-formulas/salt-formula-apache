@@ -1,5 +1,9 @@
 {%- from "apache/map.jinja" import server with context %}
 
+apache_server_service_task:
+  test.show_notification:
+    - text: "Running apache.server.service"
+
 {%- if server.enabled %}
 
 include:
@@ -84,20 +88,5 @@ apache_service:
   {%- endif %}
   - require:
     - pkg: apache_packages
-
-{%- else %}
-
-apache_service_dead:
-  service.dead:
-  - name: {{ server.service }}
-  {%- if grains.get('noservices') %}
-  - onlyif: /bin/false
-  {%- endif %}
-
-apache_remove_packages:
-  pkg.purged:
-  - pkgs: {{ server.pkgs }}
-  - require:
-    - service: apache_service_dead
 
 {%- endif %}
