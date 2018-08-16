@@ -1,7 +1,7 @@
 {%- from "apache/map.jinja" import server with context %}
 {%- if server.enabled %}
 
-{%- for module in server.modules %}
+{%- for module in server.modules |unique %}
 
 {%- if module == 'passenger' %}
 
