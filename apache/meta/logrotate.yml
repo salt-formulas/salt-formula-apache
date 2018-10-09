@@ -19,4 +19,4 @@ job:
               RESULT=$(( $RANDOM % $RANGE));
               RESULT=$(( $RESULT + $RANDOM_START ));
               sleep $RESULT
-        - postrotate: "if /etc/init.d/apache2 status > /dev/null; then /etc/init.d/apache2 reload > /dev/null; fi"
+        - postrotate: "if /etc/init.d/apache2 status > /dev/null; then /etc/init.d/apache2 restart > /dev/null; fi"
