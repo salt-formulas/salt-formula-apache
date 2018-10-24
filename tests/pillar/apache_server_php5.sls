@@ -1,6 +1,8 @@
 apache:
   server:
     enabled: true
+    bind:
+      listen_default_ports: false
     modules:
       - cgi
       - php

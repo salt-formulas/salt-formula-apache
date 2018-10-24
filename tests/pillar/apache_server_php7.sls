@@ -1,6 +1,8 @@
 apache:
   server:
     enabled: true
+    bind:
+      address: 127.0.0.1
     modules:
       - cgi
       - php

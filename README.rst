@@ -32,6 +32,7 @@ Apache plain static sites (eg. sphinx generated, from git/hg sources)
       server:
         enabled: true
         bind:
+          listen_default_ports: false
           address: '0.0.0.0'
           ports:
           - 80

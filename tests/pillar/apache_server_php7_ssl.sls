@@ -1,5 +1,7 @@
 apache:
   server:
+    bind:
+      listen_default_ports: false
     ssl:
       enabled: True
       crypto_device: 'builtin'
