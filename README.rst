@@ -441,6 +441,17 @@ a random time in a given time interval. Time in seconds
         start_period: 600
         end_period: 1200
 
+Apache modules management
+
+.. code-block:: yaml
+
+  apache:
+    server:
+      mods:
+        status:
+          enabled: True
+          status: 'disabled'
+
 
 More Information
 ================

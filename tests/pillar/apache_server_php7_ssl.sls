@@ -30,6 +30,10 @@ apache:
       - dav
       - dav_fs
       - ssl
+    mods:
+      status:
+        enabled: True
+        status: 'disabled'
     module_php: php7.0
     user:
       cloudlab:
