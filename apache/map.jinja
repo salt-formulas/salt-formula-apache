@@ -101,9 +101,16 @@
 {%- if server.site is defined %}
 {%- for site_name, site in server.site.iteritems() %}
 
-{%- if site.host.get('port', 80) %}
-{%- set dummy=listen_ports.update({site.host.get('port', 80): None}) %}
+{%- if site.host is defined and site.host.port is defined %}
+{%- do listen_ports.update( { site.host.port: true } ) %}
+{%- endif %}
+{%- if site.type == 'stats' %}
+{%- do listen_ports.update( { '127.0.0.1:80': true } ) %}
 {%- endif %}
 
 {%- endfor %}
+{%- endif %}
+
+{%- if 80 in listen_ports or '80' in listen_ports %}
+{%- do listen_ports.update( { '127.0.0.1:80': false } ) %}
 {%- endif %}
