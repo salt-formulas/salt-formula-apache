@@ -4,8 +4,6 @@ apache_server_service_task:
   test.show_notification:
     - text: "Running apache.server.service"
 
-{%- if server.enabled %}
-
 include:
 {%- if server.modules is defined %}
 - apache.server.service.modules
@@ -13,6 +11,8 @@ include:
 {%- if server.mpm is defined %}
 - apache.server.service.mpm
 {%- endif %}
+
+{%- if server.enabled %}
 
 apache_packages:
   pkg.installed:
@@ -68,7 +68,10 @@ apache_httpd_ssl_config_enable:
   - target: {{ server.conf_dir }}/security.conf
   - require:
     - file: {{ server.conf_dir }}/security.conf
+  {% if not grains.get('noservices', False) %}
+  - watch_in:
     - service: apache_service
+  {% endif %}
 
 {%   if not grains.get('noservices', False) %}
 /etc/apache2/sites-enabled/000-default.conf:
