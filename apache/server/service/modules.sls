@@ -37,7 +37,7 @@ apache_perl_package:
 
 {%- if module == 'ssl' %}
 
-apache_perl_package:
+apache_ssl_package:
   pkg.installed:
   - name: {{ server.mod_ssl }}
   - require:
