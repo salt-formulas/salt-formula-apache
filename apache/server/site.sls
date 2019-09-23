@@ -6,11 +6,35 @@
 
 {%- for site_name, site in server.site.iteritems() %}
 
-{% if site.enabled %}
+{% if site.enabled or site.get('available', False) %}
+
+  {%- if site.get('ssl', {'enabled': False}).enabled %}
+    {%- if site.ssl.get('dhparam', {'enabled': False}).enabled %}
+apache_generate_{{ site_name }}_dhparams:
+  cmd.run:
+  - name: openssl dhparam -out /etc/ssl/dhparams_apache_{{ site_name }}.pem {% if site.ssl.dhparam.numbits is defined %}{{ site.ssl.dhparam.numbits }}{% else %}2048{% endif %}
+  - unless: "test -f /etc/ssl/dhparams_apache_{{ site_name }}.pem && [ $(openssl dhparam -inform PEM -in /etc/ssl/dhparams_apache_{{ site_name }}.pem -check -text | grep -Po 'DH Parameters: \\(\\K[0-9]+') = {% if site.ssl.dhparam.numbits is defined %}{{ site.ssl.dhparam.numbits }}{% else %}2048{% endif %} ]"
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+    {% endif %}
+
+    {%- if site.ssl.get('ticket_key', {'enabled': False}).enabled %}
+apache_generate_{{ site_name }}_ticket_key:
+  cmd.run:
+  - name: openssl rand {% if site.ssl.ticket_key.numbytes is defined %}{{ site.ssl.ticket_key.numbytes }}{% else %}48{% endif %} > /etc/ssl/ticket_apache_{{ site_name }}.key
+  - unless: "test -f /etc/ssl/ticket_apache_{{ site_name }}.key && [ $(wc -c < /etc/ssl/ticket_apache_{{ site_name }}.key) = {% if site.ssl.ticket_key.numbytes is defined %}{{ site.ssl.ticket_key.numbytes }}{% else %}48{% endif %} ]"
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+    {% endif %}
+  {% endif %}
 
 {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}:
   file.managed:
-  {%- if site.type in ['proxy', 'redirect', 'static', 'stats'] %}
+  {%- if site.type in ['proxy', 'redirect', 'static', 'stats', 'wsgi' ] %}
   - source: salt://apache/files/{{ site.type }}.conf
   {%- else %}
   - source: salt://{{ site.type }}/files/apache.conf
@@ -20,10 +44,8 @@
     site_name: "{{ site_name }}"
   - require:
     - pkg: apache_packages
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 {%- if site.get('webdav', {}).get('enabled', False) %}
 {{ site.name }}_webdav_dir:
@@ -71,6 +93,7 @@
 {%- endif %}
 
 {%- if site.get('ssl', {'enabled': False}).enabled and site.ssl.get('install_cert', true) and site.host.name not in ssl_certificates.keys() %}
+  {%- if 'key_file' not in site.get('ssl') %}
 {%- set _dummy = ssl_certificates.update({site.host.name: []}) %}
 
 /etc/ssl/certs/{{ site.host.name }}.crt:
@@ -82,6 +105,10 @@
   {%- endif %}
   - require:
     - pkg: apache_packages
+  {%- if site.enabled %}
+  - require_in:
+    - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+  {%- endif %}
 
 /etc/ssl/private/{{ site.host.name }}.key:
   file.managed:
@@ -92,6 +119,10 @@
   {%- endif %}
   - require:
     - pkg: apache_packages
+  {%- if site.enabled %}
+  - require_in:
+    - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+  {%- endif %}
 
 /etc/ssl/certs/{{ site.host.name }}-ca-chain.crt:
   file.managed:
@@ -102,23 +133,42 @@
   {%- endif %}
   - require:
     - pkg: apache_packages
+  {%- if site.enabled %}
+  - require_in:
+    - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+  {%- endif %}
+
+  {%- else %}
+    {%- set certs_files = [ site.ssl.key_file, site.ssl.cert_file] %}
+    {%- if site.ssl.chain_file is defined %}
+      {%- do certs_files.append(site.ssl.chain_file) %}
+    {%- endif %}
+{{ site.name }}_certs_files_exist:
+  file.exists:
+    - names: {{ certs_files }}
+    {%- if site.enabled %}
+    - require_in:
+      - file: /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
+    {%- endif %}
+{%- endif %}
 
 {%- endif %}
 
 {%- if grains.os_family == "Debian" %}
+
+{%- if site.enabled %}
 
 /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}:
   file.symlink:
   - target: {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
   - require:
     - file: {{ server.vhost_dir }}/{{ site.type }}_{{ site.name }}{{ server.conf_ext }}
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 /etc/apache2/sites-enabled/{{ site.type }}_{{ site.name }}:
   file.absent
+{%- endif %}
 
 {%- endif %}
 

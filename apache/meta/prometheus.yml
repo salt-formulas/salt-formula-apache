@@ -1,0 +1,41 @@
+{%- from "apache/map.jinja" import server with context %}
+
+{%- if server.get('enabled', False) %}
+
+server:
+  alert:
+    ApacheServiceDown:
+      if: >-
+        apache_up != 1
+      {%- raw %}
+      labels:
+        severity: minor
+        service: apache
+      annotations:
+        summary: "Apache service is down"
+        description: "The Apache service on the {{ $labels.host }} node is down."
+      {%- endraw %}
+    ApacheServiceOutage:
+      if: >-
+        count(label_replace(apache_up, "cluster", "$1", "host", "([^0-9]+).+")) by (cluster) == count(label_replace(apache_up == 0, "cluster", "$1", "host", "([^0-9]+).+")) by (cluster)
+      {% raw %}
+      labels:
+        severity: critical
+        service: apache
+      annotations:
+        summary: "Apache service outage"
+        description: "The Apache services within the {{ $labels.cluster }} cluster are down."
+      {% endraw %}
+    ApacheWorkersAbsent:
+      if: >-
+        apache_IdleWorkers == 0
+      {%- raw %}
+      for: 2m
+      labels:
+        severity: minor
+        service: apache
+      annotations:
+        summary: "Apache has no available idle workers"
+        description: "The Apache service on the {{ $labels.host }} node has no available workers for 2 minutes."
+      {%- endraw %}
+{%- endif %}

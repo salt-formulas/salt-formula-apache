@@ -1,7 +1,7 @@
 
 {% set server = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['apache2'],
+        'pkgs': ['apache2', 'openssl'],
         'service': 'apache2',
         'mod_wsgi': 'libapache2-mod-wsgi',
         'mod_php': 'libapache2-mod-php5',
@@ -16,9 +16,14 @@
         'www_dir': '/var/www',
         'service_user': 'www-data',
         'service_group': 'www-data',
+        'logrotate': {
+          'start_period': '1',
+          'end_period': '3600',
+        },
+        'enabled': false
     },
     'Arch': {
-        'pkgs': ['apache'],
+        'pkgs': ['apache', 'openssl'],
         'service': 'httpd',
         'mod_wsgi': 'wsgi-apache',
         'mod_php': 'php-apache',
@@ -30,9 +35,10 @@
         'www_dir': '/var/www',
         'service_user': 'apache',
         'service_group': 'apache',
+        'enabled': false
     },
     'RedHat': {
-        'pkgs': ['httpd'],
+        'pkgs': ['httpd', 'openssl'],
         'service': 'httpd',
         'mod_wsgi': 'mod_wsgi',
         'mod_ssl': 'mod_ssl',
@@ -44,9 +50,10 @@
         'www_dir': '/var/www',
         'service_user': 'apache',
         'service_group': 'apache',
+        'enabled': false
     },
     'FreeBSD': {
-        'pkgs': ['apache22'],
+        'pkgs': ['apache22', 'openssl'],
         'service': 'apache22',
         'mod_wsgi': 'ap22-mod_wsgi3',
         'vhost_dir': '/usr/local/etc/apache22/Includes',
@@ -57,10 +64,11 @@
         'www_dir': '/usr/local/www/apache22/',
         'service_user': 'apache',
         'service_group': 'apache',
+        'enabled': false
     },
 }, merge=salt['grains.filter_by']({
     'trusty': {
-        'pkgs': ['apache2', 'apache2-utils'],
+        'pkgs': ['apache2', 'apache2-utils', 'openssl'],
         'service': 'apache2',
         'mod_wsgi': 'libapache2-mod-wsgi',
         'mod_php': 'libapache2-mod-php5',
@@ -76,9 +84,14 @@
         'www_dir': '/var/www',
         'service_user': 'www-data',
         'service_group': 'www-data',
+        'logrotate': {
+          'start_period': '1',
+          'end_period': '3600',
+        },
+        'enabled': false
     },
     'xenial': {
-        'pkgs': ['apache2'],
+        'pkgs': ['apache2', 'openssl'],
         'service': 'apache2',
         'mod_wsgi': 'libapache2-mod-wsgi',
         'mod_php': 'libapache2-mod-php7.0',
@@ -94,21 +107,29 @@
         'www_dir': '/var/www',
         'service_user': 'www-data',
         'service_group': 'www-data',
+        'logrotate': {
+          'start_period': '1',
+          'end_period': '3600',
+        },
+        'enabled': false
     },
 }, grain='oscodename', merge=salt['pillar.get']('apache:server'))) %}
 
 {%- set listen_ports = {} %}
 {%- if server.site is defined %}
-{%- for site_name, site in server.site.iteritems() %}
-
-{%- if site.host is defined and site.host.port is defined %}
-{%- do listen_ports.update( { site.host.port: true } ) %}
-{%- endif %}
-{%- if site.type == 'stats' %}
-{%- do listen_ports.update( { '127.0.0.1:80': true } ) %}
-{%- endif %}
-
-{%- endfor %}
+{%-   for site_name, site in server.site.iteritems() %}
+{#      TODO: move away from managing listen in ports.conf, instead add this directive #}
+{#      to specific service config. Currently it conflits with horizon formula, that manage #}
+{#      port.conf by theirown, it leads to races when applying horizon/apache states. #}
+{%-     if site.get('type', '') not in ['wsgi', 'proxy', 'static'] %}
+{%-       if site.host is defined %}
+{%-         do listen_ports.update({site.host.get('port', 80): true}) %}
+{%-       endif %}
+{%-       if site.type == 'stats' %}
+{%-         do listen_ports.update( { '127.0.0.1:80': true } ) %}
+{%-       endif %}
+{%-     endif %}
+{%-   endfor %}
 {%- endif %}
 
 {%- if 80 in listen_ports or '80' in listen_ports %}

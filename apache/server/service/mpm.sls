@@ -16,10 +16,8 @@ apache_mpm_{{ mpm_type }}_enable:
     {%- for mpm_name, dummy in server.mpm.iteritems() if mpm_name != mpm_type %}
     - file: apache_mpm_{{ mpm_name }}_disable
     {%- endfor %}
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 apache_mpm_{{ mpm_type }}_config:
   file.managed:
@@ -28,28 +26,22 @@ apache_mpm_{{ mpm_type }}_config:
   - template: jinja
   - require:
     - pkg: apache_packages
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 {%- else %}
 
 apache_mpm_{{ mpm_type }}_disable:
   file.absent:
   - name: /etc/apache2/mods-enabled/mpm_{{ mpm_type }}.load
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 apache_mpm_{{ mpm_type }}_conf_disable:
   file.absent:
   - name: /etc/apache2/mods-enabled/mpm_{{ mpm_type }}.conf
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 
 {%- endif %}
 

@@ -1,7 +1,7 @@
 {%- from "apache/map.jinja" import server with context %}
 {%- if server.enabled %}
 
-{%- for module in server.modules %}
+{%- for module in server.modules |unique %}
 
 {%- if module == 'passenger' %}
 
@@ -82,12 +82,44 @@ apache_{{ module }}_enable:
   - creates: /etc/apache2/mods-enabled/{{ module }}.load
   - require:
     - pkg: apache_packages
-  {% if not grains.get('noservices', False) %}
   - watch_in:
     - service: apache_service
-  {% endif %}
 {%- endif %}
 
 {%- endfor %}
+
+{%- if server.mods is defined %}
+
+{%- for _module, _params in server.mods.iteritems() %}
+
+  {%- if _params.enabled == true %}
+    {%- if _params.status == 'enabled' %}
+
+apache_{{ _module }}_enable:
+  cmd.run:
+  - name: "a2enmod {{ _module }} -q"
+  - creates: /etc/apache2/mods-enabled/{{ _module }}.load
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
+    {%- else %}
+
+apache_{{ _module }}_disable:
+  cmd.run:
+  - name: "a2dismod {{ _module }} -q"
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+  - onlyif:
+    - test -f /etc/apache2/mods-enabled/{{ _module }}.load
+
+    {%- endif %}
+  {%- endif %}
+
+{%- endfor %}
+{%- endif %}
 
 {%- endif %}

@@ -6,10 +6,14 @@ parameters:
       heka:
         enabled: true
       sensu:
-        enabled: true
+        enabled: false
       sphinx:
         enabled: true
       iptables:
         enabled: true
       grafana:
+        enabled: true
+      telegraf:
+        enabled: true
+      prometheus:
         enabled: true

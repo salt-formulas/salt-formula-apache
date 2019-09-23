@@ -1,3 +1,6 @@
+language: python
+python:
+- "2.7.13"
 sudo: required
 services:
   - docker
@@ -12,21 +15,27 @@ install:
     gem 'test-kitchen'
     gem 'kitchen-docker'
     gem 'kitchen-inspec'
-    gem 'inspec'
+    gem 'inspec', '<3.0.0'
+    #Version was frozen, because of issues in the version of inspec >3.0.0 -- see https://mirantis.jira.com/browse/PROD-24324 for more info, '<3.0.0'
     gem 'kitchen-salt', :git => 'https://github.com/salt-formulas/kitchen-salt.git'
   - bundle install
 
 env:
-    - PLATFORM=trevorj/salty-whales:trusty
-    - PLATFORM=trevorj/salty-whales:xenial
-
+    - PLATFORM=epcim/salt:saltstack-ubuntu-trusty-salt-2017.7 SUITE=apache-server-php5
+    - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=apache-server-php7
+    - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=apache-server-php7-ssl
+    - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=apache-server-php7
+    - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=apache-server-php7-ssl
+#    - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=apache-server-php7
+#    - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=apache-server-php7
 
 before_script:
   - set -o pipefail
   - make test | tail
 
 script:
-  - test ! -e .kitchen.yml || bundle exec kitchen test -t tests/integration
+  - test ! -e .kitchen.yml || bundle exec kitchen converge ${SUITE} || true
+  - test ! -e .kitchen.yml || bundle exec kitchen verify ${SUITE} -t tests/integration
 
 notifications:
   webhooks:
