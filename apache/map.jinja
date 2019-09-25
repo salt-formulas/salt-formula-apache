@@ -127,13 +127,9 @@
 {%-       if site.host is defined %}
 {%-         do listen_ports.update({site.host.get('port', 80): true}) %}
 {%-       endif %}
-{%-       if site.type == 'stats' %}
+{%-       if site.type == 'stats' and not server.get('bind', {}).get('listen_default_ports', false) %}
 {%-         do listen_ports.update( { '127.0.0.1:80': true } ) %}
 {%-       endif %}
 {%-     endif %}
 {%-   endfor %}
-{%- endif %}
-
-{%- if 80 in listen_ports or '80' in listen_ports %}
-{%- do listen_ports.update( { '127.0.0.1:80': false } ) %}
 {%- endif %}
