@@ -1,4 +1,8 @@
 {%- from "apache/map.jinja" import server with context %}
+
+{# RedHat httpd package comes with logrotate included, the following #}
+{# only applies for Debian/Ubuntu #}
+{%- if server.get('logrotate', { }).get('enabled', false) %}
 job:
   apache2:
       files:
@@ -21,3 +25,4 @@ job:
               sleep $RESULT
         - postrotate:
               "if /etc/init.d/apache2 status > /dev/null; then /etc/init.d/apache2 restart > /dev/null; fi"
+{%- endif %}
