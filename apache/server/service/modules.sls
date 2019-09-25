@@ -35,6 +35,16 @@ apache_perl_package:
 
 {%- endif %}
 
+{%- if module == 'ssl' %}
+
+apache_ssl_package:
+  pkg.installed:
+  - name: {{ server.mod_ssl }}
+  - require:
+    - pkg: apache_packages
+
+{%- endif %}
+
 {%- if module == 'wsgi' %}
 
 apache_wsgi_package:
@@ -65,6 +75,7 @@ apache_auth_kerb_package:
 
 {%- endif %}
 
+{%- if grains.os_family == "Debian" %}
 apache_{{ module }}_enable:
   cmd.run:
   - name: "a2enmod {{ module }}"
@@ -73,6 +84,7 @@ apache_{{ module }}_enable:
     - pkg: apache_packages
   - watch_in:
     - service: apache_service
+{%- endif %}
 
 {%- endfor %}
 

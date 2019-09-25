@@ -1,7 +1,11 @@
 {%- from "apache/map.jinja" import server with context %}
+
+{# RedHat httpd package comes with logrotate included, the following #}
+{# only applies for Debian/Ubuntu #}
+{%- if server.get('logrotate', { }).get('enabled', false) %}
 job:
   apache2:
-    - files:
+      files:
         - /var/log/apache2/*.log
       options:
         - daily
@@ -11,7 +15,7 @@ job:
         - delaycompress
         - notifempty
         - sharedscripts
-        - prerotate:
+        - prerotate: |
               RANDOM=$(( $(dd if=/dev/urandom bs=2 count=1 2> /dev/null | cksum | cut -d' ' -f1) % 32767 ));
               RANDOM_START={{ server.logrotate.start_period }};
               RANDOM_END={{ server.logrotate.end_period }};
@@ -19,4 +23,6 @@ job:
               RESULT=$(( $RANDOM % $RANGE));
               RESULT=$(( $RESULT + $RANDOM_START ));
               sleep $RESULT
-        - postrotate: "if /etc/init.d/apache2 status > /dev/null; then /etc/init.d/apache2 restart > /dev/null; fi"
+        - postrotate:
+              "if /etc/init.d/apache2 status > /dev/null; then /etc/init.d/apache2 restart > /dev/null; fi"
+{%- endif %}

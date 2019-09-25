@@ -6,6 +6,7 @@
         'mod_wsgi': 'libapache2-mod-wsgi',
         'mod_php': 'libapache2-mod-php5',
         'mod_perl': 'libapache2-mod-perl2',
+        'mod_ssl': 'apache2',
         'mod_xsendfile': 'libapache2-mod-xsendfile',
         'mod_auth_kerb': 'libapache2-mod-auth-kerb',
         'htpasswd_dir': '/etc/apache2',
@@ -17,6 +18,7 @@
         'service_user': 'www-data',
         'service_group': 'www-data',
         'logrotate': {
+	  'enabled': true,
           'start_period': '1',
           'end_period': '3600',
         },
@@ -41,6 +43,7 @@
         'pkgs': ['httpd', 'openssl'],
         'service': 'httpd',
         'mod_wsgi': 'mod_wsgi',
+        'mod_ssl': 'mod_ssl',
         'vhost_dir': '/etc/httpd/conf.d',
         'htpasswd_dir': '/etc/httpd',
         'conf_dir': '/etc/httpd/conf.d',
@@ -116,15 +119,17 @@
 
 {%- set listen_ports = {} %}
 {%- if server.site is defined %}
-{%- for site_name, site in server.site.iteritems() %}
-{# TODO: move away from managing listen in ports.conf, instead add this directive #}
-{# to specific service config. Currently it conflits with horizon formula, that manage #}
-{# port.conf by theirown, it leads to races when applying horizon/apache states. #}
-{%- if site.get('type', '') not in ['wsgi', 'proxy', 'static'] %}
-{%- if site.host.get('port', 80) %}
-{%- do listen_ports.update({site.host.get('port', 80): None}) %}
-{%- endif %}
-{%- endif %}
-
-{%- endfor %}
+{%-   for site_name, site in server.site.iteritems() %}
+{#      TODO: move away from managing listen in ports.conf, instead add this directive #}
+{#      to specific service config. Currently it conflits with horizon formula, that manage #}
+{#      port.conf by theirown, it leads to races when applying horizon/apache states. #}
+{%-     if site.get('type', '') not in ['wsgi', 'proxy', 'static'] %}
+{%-       if site.host is defined %}
+{%-         do listen_ports.update({site.host.get('port', 80): true}) %}
+{%-       endif %}
+{%-       if site.type == 'stats' and not server.get('bind', {}).get('listen_default_ports', false) %}
+{%-         do listen_ports.update( { '127.0.0.1:80': true } ) %}
+{%-       endif %}
+{%-     endif %}
+{%-   endfor %}
 {%- endif %}

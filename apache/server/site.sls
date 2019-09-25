@@ -65,9 +65,34 @@ apache_generate_{{ site_name }}_ticket_key:
   - group: {{ server.service_group }}
   - makedirs: true
 {%- endif %}
+{%- if location.get('auth', {}).get('cert', {}).allowed_cert_dns is defined %}
+{{ site.name }}_{{ location.uri }}_allowed_cert_dns:
+  file.managed:
+  - name: {{ server.htpasswd_dir }}/{{ location.auth.htpasswd }}
+  - source: salt://apache/files/allowed_cert_dns
+  - template: jinja
+  - user: root
+  - group: root
+  - mode: 644
+  - defaults:
+      allowed_cert_dns: {{ location.auth.cert.allowed_cert_dns }}
+{%- endif %}
 {%- endfor %}
 
-{%- if site.get('ssl', {'enabled': False}).enabled and site.host.name not in ssl_certificates.keys() %}
+{%- if site.get('auth', {}).get('cert', {}).allowed_cert_dns is defined %}
+{{ site.name }}_allowed_cert_dns:
+  file.managed:
+  - name: {{ server.htpasswd_dir }}/{{ site.auth.htpasswd }}
+  - source: salt://apache/files/allowed_cert_dns
+  - template: jinja
+  - user: root
+  - group: root
+  - mode: 644
+  - defaults:
+      allowed_cert_dns: {{ site.auth.cert.allowed_cert_dns }}
+{%- endif %}
+
+{%- if site.get('ssl', {'enabled': False}).enabled and site.ssl.get('install_cert', true) and site.host.name not in ssl_certificates.keys() %}
   {%- if 'key_file' not in site.get('ssl') %}
 {%- set _dummy = ssl_certificates.update({site.host.name: []}) %}
 

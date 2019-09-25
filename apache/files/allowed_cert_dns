@@ -1,0 +1,17 @@
+# Managed by Salt, changes will be overwritten
+{%- for d in allowed_cert_dns %}
+
+{%- if d.pillar_dict is defined %}
+{%- set user_certs = salt['pillar.get'](d.pillar_dict) %}
+{%- endif %}
+{%- set users = salt['list_tools.lfl_unique'](d.allowed) %}
+
+{%- for user in users|sort %}
+{%- if user_certs.get(user).cert_dns is defined %}
+{%- for dn in user_certs.get(user).cert_dns %}
+{{ dn }}:xxj31ZMTZzkVA
+{%- endfor %}
+{%- endif %}
+{%- endfor %}
+
+{%- endfor %}

@@ -4,8 +4,6 @@ apache_server_service_task:
   test.show_notification:
     - text: "Running apache.server.service"
 
-{%- if server.enabled %}
-
 include:
 {%- if server.modules is defined %}
 - apache.server.service.modules
@@ -14,13 +12,15 @@ include:
 - apache.server.service.mpm
 {%- endif %}
 
+{%- if server.enabled %}
+
 apache_packages:
   pkg.installed:
   - names: {{ server.pkgs }}
 
 apache_ports_config:
   file.managed:
-  - name: /etc/apache2/ports.conf
+  - name: {{ server.conf_dir }}/ports.conf
   - source: salt://apache/files/ports.conf
   - template: jinja
   - require:
@@ -68,15 +68,40 @@ apache_httpd_ssl_config_enable:
   - target: {{ server.conf_dir }}/security.conf
   - require:
     - file: {{ server.conf_dir }}/security.conf
+  {% if not grains.get('noservices', False) %}
+  - watch_in:
     - service: apache_service
-{%- endif %}
+  {% endif %}
 
-{% if not grains.get('noservices', False) %}
+{%   if not grains.get('noservices', False) %}
 /etc/apache2/sites-enabled/000-default.conf:
   file.absent:
     - watch_in:
       - service: apache_service
-{% endif %}
+{%   endif %}
+
+{%- elif grains.os_family == "RedHat" %}
+apache_httpd_config:
+  file.managed:
+  - name: /etc/httpd/conf/httpd.conf
+  - source: salt://apache/files/httpd.conf
+  - template: jinja
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
+apache_conf_d_ssl_config:
+  file.managed:
+  - name: /etc/httpd/conf.d/ssl.conf
+  - source: salt://apache/files/redhat_ssl.conf
+  - template: jinja
+  - require:
+    - pkg: apache_packages
+  - watch_in:
+    - service: apache_service
+
+{%- endif %}
 
 apache_service:
   service.running:
@@ -88,5 +113,20 @@ apache_service:
   {%- endif %}
   - require:
     - pkg: apache_packages
+{%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+{%- endif %}
+
+{%- else %}
+
+apache_service_dead:
+  service.dead:
+  - name: {{ server.service }}
+
+apache_remove_packages:
+  pkg.purged:
+  - pkgs: {{ server.pkgs }}
+  - require:
+    - service: apache_service_dead
 
 {%- endif %}
